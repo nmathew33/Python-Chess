@@ -1,17 +1,32 @@
-# Filename: peices.py
-# Contains all classes for chess peices
+# Copyright 2012 Nixon Thekkethil
+#
+# This file is part of Python Chess.
+#
+# Python Chess is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Python Chess is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Python Chess.  If not, see <http://www.gnu.org/licenses/>.
 
-######## Begin class ChessPeice ########
-class ChessPeice(object):
-    '''Superclass for all chess peices'''
+######## Begin class ChessPiece ########
+class ChessPiece(object):
+    """Superclass for all chess pieces"""
 
     my_pos = ()
+    was_enemy = False
     
     def __init__(self, position, color):
-        '''
+        """
         position must be a tuple in the format (row, col)
         color must be a String that is either 'White' or 'Black'
-        '''
+        """
         self.my_pos = position
         self.color = color
 
@@ -22,23 +37,28 @@ class ChessPeice(object):
         return self.color
 
     def make_move(self, board, move):
-        '''
+        """
         board must be a 8*8 matrix.
         move must be a tuple in the format (row, column)
-        '''
+        """
         board[move[0]][move[1]] = self
         board[self.my_pos[0]][self.my_pos[1]] = None
-        self.my_pos = move[0], move[1]
+        self.my_pos = move
         if self.my_pos == move:
             print 'changed'
         
 
     def in_bounds(self, board, new_pos):
-        '''
-        board must be a matrix containing the chess peices.
+        """
+        board must be a matrix containing the chess pieces.
         new_pos must be the position that needs to be checked.
         Returns a boolean value
-        '''
+        """
+        # if the previous area was an enemy, we can no longer advance
+        if self.was_enemy:
+            self.was_enemy = False
+            return False
+        
         if new_pos[0] < 0 or new_pos[1] < 0:
             return False
         try:
@@ -47,6 +67,9 @@ class ChessPeice(object):
                 return True
             elif item.get_color() == self.get_color():
                 return False
+            elif item.get_color() != self.get_color:
+                self.was_enemy = True
+                return True
             else:
                 return True
         except:
@@ -54,30 +77,30 @@ class ChessPeice(object):
     
     def __str__(self):
         return self.color
-######## End of class ChessPeice ########
+######## End of class ChessPiece ########
 
 ######## Begin class Pawn ########
-class Pawn(ChessPeice):
-    '''Class for pawns'''
+class Pawn(ChessPiece):
+    """Class for pawns"""
 
     is_first_move = True
     color = ''
     
     def __init__(self, position, color):
-        '''
+        """
         Color must be a string either 'Black' or 'White.
         Position must be a tuple in the format (row, col)
-        '''
+        """
         super(Pawn, self).__init__(position, color)
         self.color = color
         self.pos = position
 
     def get_possible_moves(self, board):
-        '''
-        board must be a matrix with the peices in it.
+        """
+        board must be a matrix with the pieces in it.
         Returns a list of tuples in the format (row, column) for the
         possible moves.
-        '''
+        """
         moves = []
         my_pos = super(Pawn, self).get_my_pos()
         if self.color == 'White':
@@ -107,8 +130,8 @@ class Pawn(ChessPeice):
 ######## End class Pawn ########
 
 ######## Begin class Rook ########
-class Rook(ChessPeice):
-    '''Class for Rook.'''
+class Rook(ChessPiece):
+    """Class for Rook."""
 
     def __init__(self, position, color):
         super(Rook, self).__init__(position, color)
@@ -125,11 +148,14 @@ class Rook(ChessPeice):
             next_pos = (my_pos[0]-1, my_pos[1])
             if super(Rook, self).in_bounds(board, next_pos):
                 moves.append(next_pos)
+#                if super(Rook, self).is_enemy(board, next_pos):
+#                    forward = False
                 my_pos = next_pos
             else:
                 forward = False
                 my_pos = super(Rook, self).get_my_pos()
 
+        my_pos = super(Rook, self).get_my_pos()
         while back:
             next_pos = (my_pos[0]+1, my_pos[1])
             if super(Rook, self).in_bounds(board, next_pos):
@@ -139,6 +165,7 @@ class Rook(ChessPeice):
                 back = False
                 my_pos = super(Rook, self).get_my_pos()
 
+        my_pos = super(Rook, self).get_my_pos()
         while left:
             next_pos = (my_pos[0], my_pos[1]-1)
             if super(Rook, self).in_bounds(board, next_pos):
@@ -148,6 +175,7 @@ class Rook(ChessPeice):
                 left = False
                 my_pos = super(Rook, self).get_my_pos()
 
+        my_pos = super(Rook, self).get_my_pos()
         while right:
             next_pos = (my_pos[0], my_pos[1]+1)
             if super(Rook, self).in_bounds(board, next_pos):
@@ -164,22 +192,22 @@ class Rook(ChessPeice):
 ######## End class Rook ########
 
 ######## Begin class Knight ########    
-class Knight(ChessPeice):
-    '''Class for Knights'''
+class Knight(ChessPiece):
+    """Class for Knights"""
 
     def __init__(self, position, color):
-        '''
+        """
         Color must be a string thats either 'Black or White'
         Position must be tuple in the format (row, col)
-        '''
+        """
         super(Knight, self).__init__(position, color)
 
     def get_possible_moves(self, board):
-        '''
-        board must be a matrix with the peices in it.
+        """
+        board must be a matrix with the pieces in it.
         Returns a list of tuples in the format (row, column) for the
         possible moves.
-        '''
+        """
         moves = []
         my_pos = super(Knight, self).get_my_pos()
         # for loop to find all move combinations
@@ -197,7 +225,7 @@ class Knight(ChessPeice):
 ######## End class Knight ########
 
 ######## Begin class Bishop ########
-class Bishop(ChessPeice):
+class Bishop(ChessPiece):
 
     def __init__(self, position, color):
         super(Bishop, self).__init__(position, color)
@@ -212,7 +240,7 @@ class Bishop(ChessPeice):
 
         while left_up:
             next_pos = (my_pos[0]-1, my_pos[1]-1)
-            if super(Bishop, self).in_bounds(next_pos, board):
+            if super(Bishop, self).in_bounds(board, next_pos):
                 moves.append(next_pos)
                 my_pos = next_pos
             else:
@@ -221,7 +249,7 @@ class Bishop(ChessPeice):
 
         while left_down:
             next_pos = (my_pos[0]-1, my_pos[1]+1)
-            if super(Bishop, self).in_bounds(next_pos, board):
+            if super(Bishop, self).in_bounds(board, next_pos):
                 moves.append(next_pos)
                 my_pos = next_pos
             else:
@@ -230,7 +258,7 @@ class Bishop(ChessPeice):
 
         while right_up:
             next_pos = (my_pos[0]+1, my_pos[1]-1)
-            if super(Bishop, self).in_bounds(next_pos, board):
+            if super(Bishop, self).in_bounds(board, next_pos):
                 moves.append(next_pos)
                 my_pos = next_pos
             else:
@@ -239,7 +267,7 @@ class Bishop(ChessPeice):
 
         while right_down:
             next_pos = (my_pos[0]+1, my_pos[1]+1)
-            if super(Bishop, self).in_bounds(next_pos, board):
+            if super(Bishop, self).in_bounds(board, next_pos):
                 moves.append(next_pos)
                 my_pos = next_pos
             else:
@@ -253,7 +281,7 @@ class Bishop(ChessPeice):
 ######## End class Bishop ########
     
 ######## Begin class Queen ########
-class Queen(ChessPeice):
+class Queen(ChessPiece):
 
     def __init__(self, position, color):
         super(Queen, self).__init__(position, color)
@@ -273,7 +301,7 @@ class Queen(ChessPeice):
         # diagonal moves
         while left_up:
             next_pos = (my_pos[0]-1, my_pos[1]-1)
-            if super(Queen, self).in_bounds(next_pos, board):
+            if super(Queen, self).in_bounds(board, next_pos):
                 moves.append(next_pos)
                 my_pos = next_pos
             else:
@@ -282,7 +310,7 @@ class Queen(ChessPeice):
 
         while left_down:
             next_pos = (my_pos[0]-1, my_pos[1]+1)
-            if super(Queen, self).in_bounds(next_pos, board):
+            if super(Queen, self).in_bounds(board, next_pos):
                 moves.append(next_pos)
                 my_pos = next_pos
             else:
@@ -291,7 +319,7 @@ class Queen(ChessPeice):
 
         while right_up:
             next_pos = (my_pos[0]+1, my_pos[1]-1)
-            if super(Queen, self).in_bounds(next_pos, board):
+            if super(Queen, self).in_bounds(board, next_pos):
                 moves.append(next_pos)
                 my_pos = next_pos
             else:
@@ -300,7 +328,7 @@ class Queen(ChessPeice):
 
         while right_down:
             next_pos = (my_pos[0]+1, my_pos[1]+1)
-            if super(Queen, self).in_bounds(next_pos, board):
+            if super(Queen, self).in_bounds(board, next_pos):
                 moves.append(next_pos)
                 my_pos = next_pos
             else:
@@ -351,8 +379,8 @@ class Queen(ChessPeice):
 ######## End class Queen ########
     
 ######## Begin King class ########
-class King(ChessPeice):
-    '''Class for the King'''
+class King(ChessPiece):
+    """Class for the King"""
 
     def __init__(self, position, color):
         super(King, self).__init__(position, color)
@@ -373,7 +401,8 @@ class King(ChessPeice):
 ######## End class King ########
 
 ######## Begin main ########
-def main():
+def test():
+    """ Test the pieces class """
     board = []
     for row in range(8):
         board.append([])
@@ -397,4 +426,3 @@ def print_board(board):
         print ''
     
 ######## End main ########
-main()
