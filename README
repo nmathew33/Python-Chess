@@ -1,2 +1,45 @@
-This is the readme file for my chess game written in Python. Run the
-chess.py file to start the game.
+Python Chess
+
+Author
+------
+Me. Nixon Mathew.
+
+What is it?
+-----------
+
+It is a chess game written in Python.  It follows all the standard
+rules of chess.  However, I haven't finished it yet (see
+Instructions).
+
+Latest Version
+--------------
+
+The latest version of Python Chess can be found in my Github
+repository at: https://github.com/nmathew33/Python-Chess.
+
+Instructions
+------------
+
+Just run the chess.py file to start the game.  As of now, you can
+click a piece and it will highlight the areas to which it can move.
+However, there are no set moves and you can repeatedly move the same
+piece or a piece of the same color.  The game also doesn't recognize
+when you win or lose.
+
+License
+-------
+
+Please see the file named COPYING.
+
+Changelog
+---------
+
+8/16/12 - Set up online repository, updated README, licensed program,
+fixed grammer, fixed diagonal moves and fixed possibles moves.
+
+7/13/12 - First version.
+
+Contact
+-------
+
+You can contact me at me email: nmathew33@gmail.com
