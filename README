@@ -2,7 +2,7 @@ Python Chess
 
 Author
 ------
-Me. Nixon Mathew.
+Nixon Mathew.
 
 What is it?
 -----------
@@ -33,6 +33,9 @@ Please see the file named COPYING.
 
 Changelog
 ---------
+
+11/21/12 - Updated docstrings and comments in pieces.py and fixed the
+bug that stopped pieces from moving after killing an enemy.
 
 8/16/12 - Set up online repository, updated README, licensed program,
 fixed grammer, fixed diagonal moves and fixed possibles moves.
