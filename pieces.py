@@ -1,4 +1,4 @@
-# Copyright 2012 Nixon Thekkethil
+# Copyright 2012 Nixon Mathew
 #
 # This file is part of Python Chess.
 #
@@ -15,17 +15,18 @@
 # You should have received a copy of the GNU General Public License
 # along with Python Chess.  If not, see <http://www.gnu.org/licenses/>.
 
-######## Begin class ChessPiece ########
+####################### Begin ChessPiece Class ########################
 class ChessPiece(object):
-    """Superclass for all chess pieces"""
+    """Superclass for all chess pieces."""
 
     my_pos = ()
-    was_enemy = False
+    was_enemy = False #previous position sent to in_bounds was an enemy
     
     def __init__(self, position, color):
         """
-        position must be a tuple in the format (row, col)
-        color must be a String that is either 'White' or 'Black'
+        Preconditions:
+            position must be a tuple in the format (row, col)
+            color must be a String that is either 'White' or 'Black'
         """
         self.my_pos = position
         self.color = color
@@ -38,9 +39,14 @@ class ChessPiece(object):
 
     def make_move(self, board, move):
         """
-        board must be a 8*8 matrix.
-        move must be a tuple in the format (row, column)
+        Preconditions:
+            board must be a 8*8 matrix containing all chess pieces
+            move must be a tuple in the format (row, column)
+        Change the position of the piece in 'board' to
+        the position 'move'
         """
+        if board[move[0]][move[1]] != None:
+            self.was_enemy = False
         board[move[0]][move[1]] = self
         board[self.my_pos[0]][self.my_pos[1]] = None
         self.my_pos = move
@@ -50,19 +56,25 @@ class ChessPiece(object):
 
     def in_bounds(self, board, new_pos):
         """
-        board must be a matrix containing the chess pieces.
-        new_pos must be the position that needs to be checked.
-        Returns a boolean value
+        Preconditions:
+            board must be a matrix containing the chess pieces
+            new_pos must be a tuple in the format (row, column)
+        Return True if 'new_pos' is unnocupied or occupied by an
+        enemy. Additionally, the previous position sent to 'in_bounds'
+        must not have contained an enemy.
+        Return False in all other cases.
         """
-        # if the previous area was an enemy, we can no longer advance
+        # if previous position was occupied by an enemy
         if self.was_enemy:
             self.was_enemy = False
             return False
-        
+
+        # make sure 'new_pos' in inside the board
         if new_pos[0] < 0 or new_pos[1] < 0:
             return False
         try:
             item = board[new_pos[0]][new_pos[1]]
+            # item can only be an enemy
             if item == None:
                 return True
             elif item.get_color() == self.get_color():
@@ -77,19 +89,19 @@ class ChessPiece(object):
     
     def __str__(self):
         return self.color
-######## End of class ChessPiece ########
+######################## End ChessPiece Class #########################
 
-######## Begin class Pawn ########
+########################## Begin Pawn Class ###########################
 class Pawn(ChessPiece):
-    """Class for pawns"""
 
     is_first_move = True
     color = ''
     
     def __init__(self, position, color):
         """
-        Color must be a string either 'Black' or 'White.
-        Position must be a tuple in the format (row, col)
+        Preconditions:
+            position must be a tuple in the format (row, col)
+            color must be a String that is either 'White' or 'Black'
         """
         super(Pawn, self).__init__(position, color)
         self.color = color
@@ -97,9 +109,10 @@ class Pawn(ChessPiece):
 
     def get_possible_moves(self, board):
         """
-        board must be a matrix with the pieces in it.
-        Returns a list of tuples in the format (row, column) for the
-        possible moves.
+        Preconditions:
+            board must be a 8*8 matrix containing all chess pieces.
+        Returns a list of tuples in the format (row, column) containing
+        all possible moves for this ChessPiece.
         """
         moves = []
         my_pos = super(Pawn, self).get_my_pos()
@@ -127,16 +140,27 @@ class Pawn(ChessPiece):
 
     def __str__(self):
         return 'Pawn' + super(Pawn, self).__str__()
-######## End class Pawn ########
+########################### End Pawn Class ############################
 
-######## Begin class Rook ########
+########################## Begin Rook Class ###########################
 class Rook(ChessPiece):
     """Class for Rook."""
 
     def __init__(self, position, color):
-        super(Rook, self).__init__(position, color)
+         """
+         Preconditions:
+             position must be a tuple in the format (row, col)
+             color must be a String that is either 'White' or 'Black'
+         """
+         super(Rook, self).__init__(position, color)
 
     def get_possible_moves(self, board):
+        """
+        Preconditions:
+            board must be a 8*8 matrix containing all chess pieces.
+        Returns a list of tuples in the format (row, column) containing
+        all possible moves for this ChessPiece.
+        """
         moves = []
         forward = True
         back = True
@@ -189,24 +213,25 @@ class Rook(ChessPiece):
 
     def __str__(self):
         return 'Rook' + super(Rook, self).get_color()
-######## End class Rook ########
+########################### End Rook Class ############################
 
-######## Begin class Knight ########    
+######################### Begin Knight Class ##########################
 class Knight(ChessPiece):
-    """Class for Knights"""
 
     def __init__(self, position, color):
-        """
-        Color must be a string thats either 'Black or White'
-        Position must be tuple in the format (row, col)
-        """
-        super(Knight, self).__init__(position, color)
+         """
+         Preconditions:
+             position must be a tuple in the format (row, col)
+             color must be a String that is either 'White' or 'Black'
+         """
+         super(Knight, self).__init__(position, color)
 
     def get_possible_moves(self, board):
         """
-        board must be a matrix with the pieces in it.
-        Returns a list of tuples in the format (row, column) for the
-        possible moves.
+        Preconditions:
+            board must be a 8*8 matrix containing all chess pieces.
+        Returns a list of tuples in the format (row, column) containing
+        all possible moves for this ChessPiece.
         """
         moves = []
         my_pos = super(Knight, self).get_my_pos()
@@ -222,15 +247,26 @@ class Knight(ChessPiece):
 
     def __str__(self):
         return 'Knight' + super(Knight, self).__str__()
-######## End class Knight ########
+########################## End Knight Class ###########################
 
-######## Begin class Bishop ########
+######################### Begin Bishop Class ##########################
 class Bishop(ChessPiece):
 
     def __init__(self, position, color):
-        super(Bishop, self).__init__(position, color)
+         """
+         Preconditions:
+             position must be a tuple in the format (row, col)
+             color must be a String that is either 'White' or 'Black'
+         """
+         super(Bishop, self).__init__(position, color)
 
     def get_possible_moves(self, board):
+        """
+        Preconditions:
+            board must be a 8*8 matrix containing all chess pieces.
+        Returns a list of tuples in the format (row, column) containing
+        all possible moves for this ChessPiece.
+        """
         moves = []
         my_pos = super(Bishop, self).get_my_pos()
         left_up = True
@@ -278,15 +314,26 @@ class Bishop(ChessPiece):
 
     def __str__(self):
         return 'Bishop' + super(Bishop, self).__str__()
-######## End class Bishop ########
+########################## End Bishop Class ###########################
     
-######## Begin class Queen ########
+######################### Begin Queen Class ###########################
 class Queen(ChessPiece):
 
     def __init__(self, position, color):
-        super(Queen, self).__init__(position, color)
+         """
+         Preconditions:
+             position must be a tuple in the format (row, col)
+             color must be a String that is either 'White' or 'Black'
+         """
+         super(Queen, self).__init__(position, color)
 
     def get_possible_moves(self, board):
+        """
+        Preconditions:
+            board must be a 8*8 matrix containing all chess pieces.
+        Returns a list of tuples in the format (row, column) containing
+        all possible moves for this ChessPiece.
+        """
         moves = []
         my_pos = super(Queen, self).get_my_pos()
         left_up = True
@@ -376,16 +423,27 @@ class Queen(ChessPiece):
 
     def __str__(self):
         return 'Queen' + super(Queen, self).__str__()
-######## End class Queen ########
+########################## End Queen Class ############################
     
-######## Begin King class ########
+########################## Begin King Class ###########################
 class King(ChessPiece):
-    """Class for the King"""
+
 
     def __init__(self, position, color):
-        super(King, self).__init__(position, color)
+         """
+         Preconditions:
+             position must be a tuple in the format (row, col)
+             color must be a String that is either 'White' or 'Black'
+         """
+         super(King, self).__init__(position, color)
 
     def get_possible_moves(self, board):
+        """
+        Preconditions:
+            board must be a 8*8 matrix containing all chess pieces.
+        Returns a list of tuples in the format (row, column) containing
+        all possible moves for this ChessPiece.
+        """
         moves = []
         my_pos = super(King, self).get_my_pos()
         for r in range(-1, 2):
@@ -398,20 +456,18 @@ class King(ChessPiece):
 
     def __str__(self):
         return 'King' + super(King, self).__str__()
-######## End class King ########
+########################### End King Class ############################
 
-######## Begin main ########
+######################## Begin Testing Method #########################
 def test():
-    """ Test the pieces class """
+    """Method for testing the pieces"""
     board = []
     for row in range(8):
         board.append([])
         for col in range(8):
             board[row].append(None)
 
-    #test = Pawn((6, 0), 'White')
     test = Rook((7, 1), 'White')
-    #board[6][0] = test
     board[7][1] = test
     moves = test.get_possible_moves(board)
     for move in moves:
@@ -424,5 +480,4 @@ def print_board(board):
         for j in range(len(board[0])):
             print str(board[i][j]) + '\t\t',
         print ''
-    
-######## End main ########
+######################### End Testing Method ##########################

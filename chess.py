@@ -1,4 +1,4 @@
-# Copyright 2012 Nixon Thekkethil
+# Copyright 2012 Nixon Mathew
 #
 # This file is part of Python Chess.
 #
